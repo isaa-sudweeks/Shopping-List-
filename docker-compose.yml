@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: shopping
+      POSTGRES_USER: shopping
+      POSTGRES_PASSWORD: shopping
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shopping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  backend:
+    build: ./backend
+    environment:
+      SHOPPING_DATABASE_URL: postgresql+psycopg://shopping:shopping@db:5432/shopping
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  postgres_data:

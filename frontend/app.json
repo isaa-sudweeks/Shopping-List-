@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Shopping Companion",
+    "slug": "shopping-companion",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "platforms": ["ios"],
+    "sdkVersion": "51.0.0",
+    "runtimeVersion": "51.0.0",
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "ios": {
+      "bundleIdentifier": "com.shoppinglist.assistant",
+      "supportsTablet": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "00000000-0000-0000-0000-000000000000"
+      }
+    }
+  }
+}

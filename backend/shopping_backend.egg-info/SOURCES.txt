@@ -1,0 +1,13 @@
+pyproject.toml
+app/__init__.py
+app/config.py
+app/database.py
+app/main.py
+app/models.py
+app/schemas.py
+shopping_backend.egg-info/PKG-INFO
+shopping_backend.egg-info/SOURCES.txt
+shopping_backend.egg-info/dependency_links.txt
+shopping_backend.egg-info/requires.txt
+shopping_backend.egg-info/top_level.txt
+tests/test_app.py

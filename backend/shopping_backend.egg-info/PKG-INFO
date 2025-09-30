@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: shopping-backend
+Version: 0.1.0
+Summary: Pantry and meal planning API
+Author: Shopping List AI
+Requires-Python: >=3.10
+Requires-Dist: fastapi>=0.110
+Requires-Dist: uvicorn[standard]>=0.29
+Requires-Dist: sqlalchemy>=2.0
+Requires-Dist: alembic>=1.13
+Requires-Dist: pydantic-settings>=2.2
+Requires-Dist: httpx>=0.27
+Requires-Dist: beautifulsoup4>=4.12
+Requires-Dist: python-dateutil>=2.9
+Requires-Dist: psycopg[binary]>=3.1
+Provides-Extra: test
+Requires-Dist: pytest>=8.1; extra == "test"
+Requires-Dist: httpx>=0.27; extra == "test"
