@@ -25,7 +25,15 @@ describe('App root navigation', () => {
   beforeEach(() => {
     global.fetch = jest.fn(async (url: string) => {
       const path = url.replace('http://localhost:8000', '');
-      const key = path === '/meal-plans' ? '/meal-plans?week_start=auto' : path;
+
+      // Handle meal plans and shopping lists with dynamic week_start
+      let key = path;
+      if (path.startsWith('/meal-plans?week_start=')) {
+        key = '/meal-plans?week_start=auto';
+      } else if (path.startsWith('/shopping-list?week_start=')) {
+        key = '/shopping-list?week_start=auto';
+      }
+
       if (!(key in responses)) {
         throw new Error(`Unexpected fetch ${url}`);
       }
