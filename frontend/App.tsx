@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import { useAppData } from './src/hooks/useAppData';
 
@@ -20,6 +21,8 @@ function formatQuantity(quantity: number): string {
   }
   return quantity.toFixed(2).replace(/\.00$/, '');
 }
+
+import { AddInventoryModal } from './src/components/AddInventoryModal';
 
 const InventoryScreen = ({
   loading,
@@ -147,6 +150,7 @@ function capitalize(value: string) {
 
 export default function App(): React.ReactElement {
   const data = useAppData();
+  const [isAddModalVisible, setIsAddModalVisible] = React.useState(false);
 
   return (
     <NavigationContainer>
@@ -157,6 +161,22 @@ export default function App(): React.ReactElement {
         <Tab.Screen name="Recipes">
           {() => <RecipesScreen {...data} />}
         </Tab.Screen>
+        <Tab.Screen
+          name="Add"
+          component={View} // Placeholder
+          listeners={() => ({
+            tabPress: (e) => {
+              e.preventDefault();
+              setIsAddModalVisible(true);
+            },
+          })}
+          options={{
+            tabBarLabel: 'Add',
+            tabBarIcon: ({ color, size }) => (
+              <Text style={{ color, fontSize: size, fontWeight: 'bold' }}>+</Text>
+            ),
+          }}
+        />
         <Tab.Screen name="Meal Plan">
           {() => <MealPlanScreen {...data} />}
         </Tab.Screen>
@@ -164,6 +184,11 @@ export default function App(): React.ReactElement {
           {() => <ShoppingListScreen {...data} />}
         </Tab.Screen>
       </Tab.Navigator>
+      <AddInventoryModal
+        visible={isAddModalVisible}
+        onClose={() => setIsAddModalVisible(false)}
+        onAdd={data.addInventoryItem}
+      />
     </NavigationContainer>
   );
 }

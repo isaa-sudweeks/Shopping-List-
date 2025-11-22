@@ -39,7 +39,23 @@ export type ShoppingListItem = {
   unit?: string | null;
 };
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8000';
+import Constants from 'expo-constants';
+
+const getApiBaseUrl = () => {
+  if (process.env.EXPO_PUBLIC_API_BASE_URL) {
+    return process.env.EXPO_PUBLIC_API_BASE_URL;
+  }
+
+  const hostUri = Constants.expoConfig?.hostUri;
+  if (hostUri) {
+    const ip = hostUri.split(':')[0];
+    return `http://${ip}:8000`;
+  }
+
+  return 'http://localhost:8000';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 function getCurrentWeekStart(): string {
   const now = new Date();
@@ -127,5 +143,25 @@ export function useAppData() {
     load();
   }, [load]);
 
-  return { ...state, refresh: load };
+  const addInventoryItem = useCallback(
+    async (item: Omit<InventoryItem, 'id'>) => {
+      setState((prev) => ({ ...prev, loading: true, error: undefined }));
+      try {
+        await fetch(`${API_BASE_URL}/inventory`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(item),
+        });
+        await load();
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        setState((prev) => ({ ...prev, loading: false, error: message }));
+      }
+    },
+    [load],
+  );
+
+  return { ...state, refresh: load, addInventoryItem };
 }
