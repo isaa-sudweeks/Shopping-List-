@@ -40,7 +40,16 @@ export type ShoppingListItem = {
 };
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8000';
-const DEFAULT_WEEK_START = 'auto';
+
+function getCurrentWeekStart(): string {
+  const now = new Date();
+  const day = now.getDay(); // 0 is Sunday
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+  const monday = new Date(now.setDate(diff));
+  return monday.toISOString().split('T')[0];
+}
+
+const DEFAULT_WEEK_START = getCurrentWeekStart();
 
 type AppDataState = {
   inventory: InventoryItem[];
@@ -78,15 +87,33 @@ export function useAppData() {
         fetchJson<InventoryItem[]>('/inventory'),
         fetchJson<Recipe[]>('/recipes'),
       ]);
-      const mealPlan = await fetchJson<MealPlan | null>(`/meal-plans?week_start=${DEFAULT_WEEK_START}`);
-      const shoppingList = await fetchJson<{ items: ShoppingListItem[] }>(
-        `/shopping-list?week_start=${DEFAULT_WEEK_START}`,
-      );
+
+      let mealPlan: MealPlan | null = null;
+      try {
+        mealPlan = await fetchJson<MealPlan | null>(`/meal-plans?week_start=${DEFAULT_WEEK_START}`);
+      } catch (e) {
+        if (!(e instanceof Error && e.message.includes('404'))) {
+          throw e;
+        }
+      }
+
+      let shoppingList: ShoppingListItem[] = [];
+      try {
+        const result = await fetchJson<{ items: ShoppingListItem[] }>(
+          `/shopping-list?week_start=${DEFAULT_WEEK_START}`,
+        );
+        shoppingList = result.items;
+      } catch (e) {
+        if (!(e instanceof Error && e.message.includes('404'))) {
+          throw e;
+        }
+      }
+
       setState({
         inventory,
         recipes,
         mealPlan,
-        shoppingList: shoppingList.items,
+        shoppingList,
         loading: false,
         error: undefined,
       });
